@@ -6,19 +6,17 @@
   "engines": { "node": ">=22" },
   "scripts": {
     "check": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "dataset:preflight": "tsx src/data/preflight.ts",
-    "dataset:sample": "tsx src/data/cli.ts",
-    "pulse:demo:dry": "tsx src/demo/dry-run.ts"
+    "build:core": "tsc -p tsconfig.build.json",
+    "test": "pnpm build:core && node --test .pulse-build/tests/*.test.js",
+    "dataset:preflight": "pnpm build:core && node .pulse-build/src/data/preflight.js",
+    "dataset:sample": "pnpm build:core && node .pulse-build/src/data/cli.js",
+    "pulse:demo:dry": "pnpm build:core && node .pulse-build/src/demo/dry-run.js"
   },
   "dependencies": {
     "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
-    "tsx": "^4.19.3",
-    "typescript": "^5.8.2",
-    "vitest": "^3.0.9"
+    "typescript": "^5.8.2"
   }
 }
