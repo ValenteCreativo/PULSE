@@ -55,4 +55,11 @@
 - Status: complete
 - Guardrails verified immediately before broadcast: chain `10143`, intended deployer, constructor with no arguments, compiled bytecode, and estimated maximum fee `0.037816092 MON` below the `0.10 MON` authorization cap.
 - Broadcast count: one deployment transaction. Receipt status was successful after two confirmations; no retry was performed.
-- Envio configuration now starts at the contract deployment block and targets its deployed address. It remains unstarted until an `ENVIO_API_TOKEN` is configured.
+- Envio configuration now starts at the contract deployment block and targets its deployed address. The token is configured; local startup is blocked only by the missing Docker/Podman runtime.
+
+## Milestone 7 — Envio HyperIndex setup
+
+- Status: code generation and HyperSync connectivity complete; local service startup blocked by missing Docker/Podman.
+- Evidence: `envio codegen` and `tsc --noEmit` pass with Envio 3.14.0. The authenticated Monad HyperSync height endpoint returned HTTP 200, so no RPC sync configuration is required.
+- Blocker: `envio dev` requires Docker or Podman for its local PostgreSQL and Hasura stack. It explicitly reported neither runtime is installed. No indexer database or GraphQL endpoint exists yet.
+- Safety: no purchase events or intelligence transactions were created.

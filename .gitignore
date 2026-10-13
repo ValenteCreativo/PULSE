@@ -11,4 +11,9 @@ data/*.duckdb
 data/raw/
 data/samples/
 artifacts/
+indexer/node_modules/
+indexer/generated/
+indexer/.env
+indexer/.envio/
+indexer/envio-env.d.ts
 *.log

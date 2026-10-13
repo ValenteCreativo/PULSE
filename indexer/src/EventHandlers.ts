@@ -1,4 +1,4 @@
-import { indexer } from "generated";
+import { indexer } from "envio";
 
 /** Duplicate-safe primary key means Envio's replays/reorg handling cannot double-count a log. */
 indexer.onEvent(
@@ -13,15 +13,15 @@ indexer.onEvent(
       amount: event.params.amount,
       purchaseId: event.params.purchaseId,
       transactionHash: event.transaction.hash,
-      blockNumber: event.block.number,
-      timestamp: event.block.timestamp,
+      blockNumber: BigInt(event.block.number),
+      timestamp: BigInt(event.block.timestamp),
     });
     const demand = await context.TopicDemand.get(event.params.topicId);
     context.TopicDemand.set({
       id: event.params.topicId,
       purchases: (demand?.purchases ?? 0n) + 1n,
       totalAmount: (demand?.totalAmount ?? 0n) + event.params.amount,
-      lastPurchaseTimestamp: event.block.timestamp,
+      lastPurchaseTimestamp: BigInt(event.block.timestamp),
     });
     const buyerId = event.params.buyer.toLowerCase();
     const buyer = await context.BuyerDemand.get(buyerId);
@@ -29,7 +29,7 @@ indexer.onEvent(
       id: buyerId,
       purchases: (buyer?.purchases ?? 0n) + 1n,
       totalAmount: (buyer?.totalAmount ?? 0n) + event.params.amount,
-      lastPurchaseTimestamp: event.block.timestamp,
+      lastPurchaseTimestamp: BigInt(event.block.timestamp),
     });
   },
 );
