@@ -15,7 +15,7 @@
     "pulse:demo:dry": "pnpm build:core && node .pulse-build/src/demo/dry-run.js",
     "contract:prepare": "pnpm build:core && node .pulse-build/scripts/prepare-deployment.js",
     "deploy:preflight": "pnpm build:core && node --env-file=.env .pulse-build/scripts/deployment-preflight.js",
-    "deploy:monad-testnet": "pnpm build:core && node .pulse-build/scripts/deploy-monad-testnet.js"
+    "deploy:monad-testnet": "pnpm build:core && node --env-file=.env .pulse-build/scripts/deploy-monad-testnet.js"
   },
   "dependencies": {
     "@duckdb/node-api": "1.5.6-r.1",
