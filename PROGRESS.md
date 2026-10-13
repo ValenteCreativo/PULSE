@@ -63,3 +63,11 @@
 - Evidence: `envio codegen` and `tsc --noEmit` pass with Envio 3.14.0. The authenticated Monad HyperSync height endpoint returned HTTP 200, so no RPC sync configuration is required.
 - Blocker: `envio dev` requires Docker or Podman for its local PostgreSQL and Hasura stack. It explicitly reported neither runtime is installed. No indexer database or GraphQL endpoint exists yet.
 - Safety: no purchase events or intelligence transactions were created.
+
+## Milestone 8 — publication audit and autonomous buyer boundary
+
+- Status: local implementation complete; GitHub/Envio Cloud handoff awaits operator approval.
+- Publication audit: all reachable Git history was scanned for concrete private-key, API-token, GitHub-token, AWS-key, and PEM patterns without printing file contents. No matching credential values, tracked `.env` files, local databases, raw datasets, or restricted dataset artifacts were found. `.env`, `.env.*`, DuckDB, raw data, and Envio generated files are ignored; local `.env` mode is `600`.
+- Cloud readiness: `indexer/` is self-contained, uses exact dependency versions, and targets the deployed Monad testnet contract from block `70583679`. Generated Envio type files are intentionally local-only.
+- Agent implementation: added a Nebius buyer model boundary that is disabled by default; a purchase tool that produces dry-run plans unless a per-call broadcast authorization is supplied; and atomic per-product, per-purchase, daily-count, and daily-MON budget guards. The default agent cannot invoke paid inference, sign, broadcast, or reserve funds.
+- Test evidence: `pnpm check`, `pnpm test` (23 tests), `indexer` code generation, and indexer type checking pass. No RPC write, Nebius inference, MON spend, or intelligence purchase was performed.
