@@ -4,7 +4,7 @@ Attention intelligence for agents: deterministic Human Pulse from social-data sa
 
 ## Current status
 
-Milestone 1 provides a strict TypeScript foundation. Milestone 2 implements safe dataset preflight and normalization contracts. The specified source currently requires credentials from this environment; see `PROGRESS.md`.
+Human Pulse and its typed API work in clearly labeled fixture mode, with embedded DuckDB verification. A native-MON purchase contract is locally tested but not deployed. See `PROGRESS.md` for source and settlement limitations.
 
 ## Commands
 

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./node_modules/envio/evm.schema.json
+name: pulse-intelligence-market
+description: Indexes PULSE purchase entitlements on Monad testnet after deployment.
+
+contracts:
+  - name: PulseIntelligenceMarket
+    events:
+      - event: "IntelligencePurchased(address indexed buyer, bytes32 indexed topicId, bytes32 indexed productId, uint256 amount, bytes32 purchaseId)"
+
+chains:
+  - id: 10143 # Monad testnet
+    start_block: 0 # Replace with the deployment block before starting the indexer.
+    contracts:
+      - name: PulseIntelligenceMarket
+        # Intentionally inert placeholder: never run until a tested contract is explicitly deployed.
+        address: "0x0000000000000000000000000000000000000000"

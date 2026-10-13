@@ -18,5 +18,26 @@
 
 ## Open blockers
 
-- Authorized access or a public, license-confirmed mirror is needed before real TikTok sampling.
-- Monad x402/facilitator and testnet deployment details require later verified investigation.
+- `utopiar/tiktok-videos-4b` is accessible but research-use only and carries personal-data/terms-of-service limitations. Its 10 GB Parquet files exceed the current safe sampling budget. `haoxin1998/SocialComputing_TikTokDataset` remains inaccessible (HTTP 401).
+- Monad x402/facilitator support for the required testnet flow remains unverified. The direct contract path is locally proven but not deployed.
+- Envio needs an API token and a real approved deployment address before it can index anything.
+
+## Milestone 3 — Human Pulse and typed intelligence API
+
+- Status: complete
+- Implemented: embedded DuckDB verification, deterministic hashtag/topic metrics, provenance, coverage, confidence, limitations, typed HTTP handlers for health, topics, Human Pulse, and a non-payable catalog.
+- Data mode: `fixture` only. Every response makes that explicit; no fixture is presented as an observed social insight.
+- Test evidence: API integration, metric determinism, byte-budget guards, and DuckDB runtime tests pass.
+
+## Milestone 4 — local Monad contract and Envio event scaffold
+
+- Status: complete locally; undeployed
+- Implemented: `PulseIntelligenceMarket`, exact-price purchases, topic/product/purchase binding, replay prevention, indexable purchase event, and inactive Envio schema/handler scaffold.
+- Test evidence: Solidity compiles and is exercised in an in-memory EVM. The test validates product setup, wrong-amount rejection, successful event emission, and duplicate purchase rejection.
+- Safety: no wallet, RPC transaction, contract deployment, payment, Envio token, or paid inference was used.
+
+## Next
+
+- Obtain an approved, bounded data source or a legal/product decision to use a research-only `utopiar` sample, then build the DuckDB `httpfs` row-group sampler.
+- Add server-side payment confirmation and entitlement storage before any testnet deployment.
+- After an approved deployment, set the verified address/block in `indexer/config.yaml`, configure Envio credentials, and implement registered-demo-agent attribution.

@@ -1,0 +1,18 @@
+type Purchase {
+  id: ID! # chainId-transactionHash-logIndex; safe across retries and reorg replays
+  buyer: String!
+  topicId: String!
+  productId: String!
+  amount: BigInt!
+  purchaseId: String!
+  transactionHash: String!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+}
+
+type TopicDemand {
+  id: ID! # topicId
+  purchases: BigInt!
+  totalAmount: BigInt!
+  lastPurchaseTimestamp: BigInt!
+}

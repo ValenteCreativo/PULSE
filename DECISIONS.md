@@ -11,3 +11,15 @@ DuckDB is not installed in the current environment. The initial ingestion contra
 ## 2026-10-12 — Settlement remains unimplemented
 
 Mesh402's Hedera/Blocky402 pattern is useful for exact requirement comparison, one-shot redemption, receipt validation, and redaction. It is not copied as a Monad implementation. Monad x402/facilitator compatibility must be independently verified before settlement work begins.
+
+## 2026-10-12 — Dataset alternatives are constrained research sources
+
+`utopiar/tiktok-videos-4b` is publicly accessible and exposes 27 Parquet files. Its card declares `research-use`, says captions are personal data, and states collection was contrary to TikTok terms. It is eligible only for a clearly labeled research/demo sample after a product/legal decision; it is not treated as commercially reusable. A bounded resolver check showed `videos-00.parquet` is 10,697,285,411 bytes, so the current 50 MB budget rejects it before any read. `haoxin1998/SocialComputing_TikTokDataset` returned HTTP 401 and is not used.
+
+## 2026-10-12 — Monad settlement is direct-contract first
+
+Monad documents testnet as EVM-compatible with chain ID 10143 and native MON. Current documentation mentions x402 proxies on mainnet, but this audit did not verify a supported testnet facilitator/asset path. PULSE therefore implements an auditable native-MON contract locally first and leaves x402 as a separately verified adapter. No deployment or payment occurred.
+
+## 2026-10-12 — Envio is scaffolded but intentionally inactive
+
+The Envio HyperIndex configuration captures the contract event schema using Monad testnet chain ID 10143. Its address is an inert zero-address placeholder until an approved deployment exists. Current Envio documentation requires an API token for local HyperSync-backed workflows; no token was requested or used.
