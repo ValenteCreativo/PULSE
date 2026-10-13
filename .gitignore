@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.*
+!.env.example
+dist/
+coverage/
+.next/
+data/*.duckdb
+data/raw/
+data/samples/
+artifacts/
+*.log
