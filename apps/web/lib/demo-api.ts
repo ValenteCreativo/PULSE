@@ -24,5 +24,14 @@ export function demoApi(request: Request): Response {
   if (url.pathname === "/api/v1/agent-pulse") return response(agent);
   if (url.pathname === "/api/v1/attention-gap") return response(gap);
   if (url.pathname === "/api/v1/intelligence/catalog") return response({ products: pulse.topics.map((topic) => ({ id: `human-pulse:${topic.id}`, topicId: topic.id, availability: "payment-not-yet-enabled", price: null })) });
+  if (url.pathname === "/api/v1/manifest.json") return response({ name: "PULSE", version: "v1", description: "Safe public read-only attention intelligence API.", mode: pulse.mode, discovery: "/llms.txt", operations: [
+    { method: "GET", path: "/api/v1/health", access: "public", output: "health status" },
+    { method: "GET", path: "/api/v1/status", access: "public", output: "network, indexer, payment configuration" },
+    { method: "GET", path: "/api/v1/topics", access: "public", output: "deterministic topic summaries and provenance" },
+    { method: "GET", path: "/api/v1/human-pulse", access: "public", output: "human attention snapshot" },
+    { method: "GET", path: "/api/v1/agent-pulse", access: "public", output: "attributable registered-agent demand only" },
+    { method: "GET", path: "/api/v1/attention-gap", access: "public", output: "human versus agent comparison when evidence exists" },
+    { method: "GET", path: "/api/v1/intelligence/catalog", access: "public", output: "catalog availability; no configured prices" }
+  ], paidIntelligence: { enabled: false, note: "No public endpoint may spend funds or invoke paid inference." } });
   return response({ error: "Route not found", code: "NOT_FOUND" }, 404);
 }

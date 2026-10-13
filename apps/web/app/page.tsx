@@ -1,33 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { humanPulseSchema, systemStatusSchema, type HumanPulse } from "../../../src/api/public-contracts";
 
 type Status = ReturnType<typeof systemStatusSchema.parse>;
+type Topic = HumanPulse["topics"][number];
+const CONTRACT = "0x0a14814aa3d4fd9c2e17090af23a655204993bff";
+const explorer = `https://testnet.monadvision.com/address/${CONTRACT}`;
+const score = (value: number) => `${Math.round(value * 100)}%`;
+
+function Screen({ topic, index, onSelect }: { topic: Topic; index: number; onSelect: (topic: Topic) => void }) {
+  return <button className={`screen screen-${index % 6}`} onClick={() => onSelect(topic)} aria-label={`Explore ${topic.label} signal`}>
+    <span className="screen-noise"/><span className="screen-glass"/><span className="screen-meta">#{topic.label}</span>
+    <strong>{score(topic.prevalence)}</strong><small>{topic.momentum === null ? "sampled signal" : `${topic.momentum >= 0 ? "+" : ""}${Math.round(topic.momentum * 100)} momentum`}</small>
+  </button>;
+}
 
 export default function Home() {
-  const [status, setStatus] = useState<Status | null>(null);
-  const [pulse, setPulse] = useState<HumanPulse | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    Promise.all([fetch("/api/v1/status"), fetch("/api/v1/human-pulse")])
-      .then(async ([statusResponse, pulseResponse]) => {
-        if (!statusResponse.ok || !pulseResponse.ok) throw new Error("PULSE API is unavailable");
-        setStatus(systemStatusSchema.parse(await statusResponse.json()));
-        setPulse(humanPulseSchema.parse(await pulseResponse.json()));
-      }).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : "Unable to load PULSE"));
-  }, []);
-
-  return <main>
-    <header><p className="eyebrow">MONAD TESTNET · PULSE</p><h1>Attention intelligence for agents.</h1><p className="lede">A transparent demo of deterministic Human Pulse and attributable Agent Pulse. No live social-data claims.</p></header>
-    {error ? <p className="error">{error}</p> : null}
-    <section className="status" aria-label="System status">
-      <article><span>Network</span><strong>{status?.chain.network ?? "Loading…"}</strong><small>Chain {status?.chain.id ?? "—"}</small></article>
-      <article><span>Human Pulse</span><strong>{status?.humanPulse.dataStatus ?? "Loading…"}</strong><small>Clearly labelled fixture mode</small></article>
-      <article><span>Indexer</span><strong>{status?.indexer.status ?? "Loading…"}</strong><small>{status?.indexer.graphqlUrl ?? "Envio Cloud handoff pending"}</small></article>
-    </section>
-    <section className="panel"><div><p className="eyebrow">HUMAN PULSE</p><h2>{pulse?.generatedNarrative ?? "Loading deterministic signals…"}</h2><p>{pulse?.limitations[0]}</p></div><p className="confidence">Confidence<br/><strong>{pulse ? `${Math.round(pulse.confidence * 100)}%` : "—"}</strong></p></section>
-    <section><p className="eyebrow">TOPICS</p><div className="topics">{pulse?.topics.map((topic) => <article key={topic.id}><h3>#{topic.label}</h3><strong>{Math.round(topic.prevalence * 100)}%</strong><small>sample prevalence · {topic.sampleCount} records</small></article>) ?? <p>Loading…</p>}</div></section>
-    <footer>Payments remain disabled until an operator configures a product and explicitly authorizes a testnet purchase.</footer>
+  const [status, setStatus] = useState<Status | null>(null); const [pulse, setPulse] = useState<HumanPulse | null>(null); const [selected, setSelected] = useState<Topic | null>(null); const [error, setError] = useState<string | null>(null);
+  useEffect(() => { Promise.all([fetch("/api/v1/status"), fetch("/api/v1/human-pulse")]).then(async ([a,b]) => { if (!a.ok || !b.ok) throw new Error("PULSE API is unavailable"); setStatus(systemStatusSchema.parse(await a.json())); setPulse(humanPulseSchema.parse(await b.json())); }).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : "Unable to load PULSE")); }, []);
+  const featured = useMemo(() => pulse?.topics.slice(0, 12) ?? [], [pulse]);
+  return <main className="pulse-site"><div className="film-grain" aria-hidden="true"/>
+    <nav className="topnav"><Link href="/" className="brand">PULSE<span>/</span></Link><span className="nav-network">ATTENTION INTELLIGENCE NETWORK</span><Link className="agent-link" href="/agents">FOR AGENTS <b>↗</b></Link></nav>
+    <div className="hud" aria-hidden="true"><i className="corner tl"/><i className="corner tr"/><i className="corner bl"/><i className="corner br"/><span>REC · FIXTURE FEED</span><span>MONAD TESTNET · 10143</span></div>
+    <section className="hero" aria-labelledby="hero-title"><div className="hero-copy"><p className="kicker">OBSERVATORY / 001</p><h1 id="hero-title">THE WORLD IS<br/>PAYING ATTENTION.<br/><em>ARE AGENTS?</em></h1><p className="hero-lede">Explore human attention. Observe autonomous demand. Discover the gap.</p><div className="hero-actions"><a href="#market" className="button primary">Explore intelligence <span>↓</span></a><Link className="button" href="/agents">Read the agent interface <span>↗</span></Link></div></div><div className="observer" aria-hidden="true"><div className="head"/><div className="body"/></div><div className="signal-orbit orbit-a"/><div className="signal-orbit orbit-b"/><p className="scroll-cue">SCROLL TO ENTER THE SIGNAL <span>↓</span></p></section>
+    <section className="screen-room" aria-labelledby="signal-title"><div className="section-heading"><p className="kicker">ACT I / HUMAN SIGNAL</p><h2 id="signal-title">A deterministic reading<br/>of human attention.</h2><p>The active feed is a clearly labelled fixture—not a claim of live social attention.</p></div><div className="tv-wall">{featured.length ? featured.map((topic, i) => <Screen key={topic.id} topic={topic} index={i} onSelect={setSelected}/>) : <div className="screen-placeholder">TUNING THE SIGNAL…</div>}</div>{error && <p className="error">{error}</p>}<aside className="fixture-note">SOURCE STATUS <b>{status?.humanPulse.dataStatus ?? "connecting"}</b> · {pulse ? `${pulse.sourceCoverage.records} deterministic records` : "loading"}</aside></section>
+    <section className="noise" aria-label="Through the noise"><p>HUMANS CREATE<br/>THE SIGNAL.</p><p>AGENTS TURN ATTENTION<br/>INTO <em>DEMAND.</em></p></section>
+    <section id="market" className="market" aria-labelledby="market-title"><div className="section-heading"><p className="kicker">ACT III / INTELLIGENCE MARKET</p><h2 id="market-title">Signal is available.<br/><em>Settlement is not fabricated.</em></h2><p>Browse public intelligence without a wallet. Prices and purchases appear only when verified.</p></div><div className="market-grid">{featured.slice(0, 6).map((topic, i) => <article className="market-card" key={topic.id} onClick={() => setSelected(topic)} tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter") setSelected(topic); }}><span>0{i + 1} / HUMAN-PULSE:{topic.id}</span><div className={`card-scope scope-${i % 4}`}/><h3>{topic.label}</h3><p>Attention <b>{score(topic.prevalence)}</b></p><p className="muted">Available intelligence · fixture provenance</p><footer><b>NOT YET ACTIVE</b><span>Price —</span></footer></article>)}</div></section>
+    <section className="agent-pulse" id="app" aria-labelledby="agent-pulse-title"><div><p className="kicker">ACT IV / AGENT PULSE</p><h2 id="agent-pulse-title">Demand remains<br/><em>unobserved.</em></h2><p>Envio-indexed activity becomes visible here only after attributable, registered-agent purchases exist.</p><Link href="/agents" className="text-link">Open the operational interface ↗</Link></div><div className="empty-terminal"><div className="terminal-top"><i/> AGENT_PULSE / INDEXER</div><pre>{`STATUS: ${status?.indexer.status ?? "CONNECTING"}\nREGISTERED AGENTS: 0\nVERIFIED PURCHASES: 0\n\nNo attributable activity indexed.\nNo transactions are simulated.`}</pre><div className="terminal-foot">PAYMENTS: {status?.payments.status ?? "NOT CONFIGURED"}</div></div></section>
+    <section className="gap" aria-labelledby="gap-title"><div className="section-heading"><p className="kicker">ACT V / ATTENTION GAP</p><h2 id="gap-title">What people notice.<br/>What agents choose to know.</h2><p>The comparison stays unavailable until evidence supports it.</p></div><div className="gap-chart">{featured.slice(0, 7).map((topic) => <div className="gap-row" key={topic.id}><span>#{topic.label}</span><div className="human-bar" style={{width:`${Math.max(8, topic.prevalence * 100)}%`}}/><div className="agent-bar"/><small>human {score(topic.prevalence)} · agent —</small></div>)}<p className="gap-status">ATTENTION GAP: UNAVAILABLE / INSUFFICIENT ATTRIBUTABLE AGENT DATA</p></div></section>
+    <section className="finale"><p className="kicker">ACT VI / THE OBSERVER</p><h2>ATTENTION IS<br/>BECOMING AN<br/><em>ECONOMY.</em></h2><p>PULSE makes it observable.</p><div className="final-actions"><a href="#market" className="button primary">Explore intelligence</a><Link href="/agents" className="button">View agent interface</Link><a href={explorer} target="_blank" rel="noreferrer" className="button">Inspect Monad contract ↗</a><a href="https://github.com/ValenteCreativo/PULSE" target="_blank" rel="noreferrer" className="button">Open source ↗</a></div><small>SETTLED ON MONAD TESTNET · NO MONAD ENDORSEMENT IMPLIED</small></section>
+    {selected && <div className="signal-modal" role="dialog" aria-modal="true" aria-labelledby="signal-detail"><button className="modal-backdrop" onClick={() => setSelected(null)} aria-label="Close signal detail"/><article><button className="close" onClick={() => setSelected(null)}>×</button><p className="kicker">PUBLIC SIGNAL / FIXTURE</p><h2 id="signal-detail">#{selected.label}</h2><dl><div><dt>Human attention</dt><dd>{score(selected.prevalence)}</dd></div><div><dt>Momentum</dt><dd>{selected.momentum === null ? "Not supported" : score(selected.momentum)}</dd></div><div><dt>Sample records</dt><dd>{selected.sampleCount}</dd></div><div><dt>Intelligence price</dt><dd>Not configured</dd></div></dl><p>This topic is derived from deterministic fixture data. It is browsable without a wallet; paid intelligence is not enabled.</p><Link href="/agents" className="button primary">Use the API ↗</Link></article></div>}
   </main>;
 }
