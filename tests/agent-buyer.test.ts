@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { AutonomousBuyerAgent, NebiusBuyerModel, PaidInferenceDisabledError, type BuyerModel } from "../src/agent/nebius-buyer.js";
 import { PurchaseTool } from "../src/agent/purchase-tool.js";
+import { createFirstPurchasePolicy, firstPurchaseBudget } from "../src/agent/first-purchase.js";
 import { DuckDbSpendLedger, SpendLedger, SpendingPolicyError, type PurchaseIntent, type SpendingPolicy } from "../src/agent/spending.js";
 
 const contract = "0x0000000000000000000000000000000000000abc";
@@ -14,6 +15,13 @@ const policy: SpendingPolicy = { chainId: 10143, contractAddress: contract, allo
 const purchaseId = `0x${"3".repeat(64)}`;
 
 describe("autonomous buyer safeguards", () => {
+  it("prepares a single bounded first-purchase policy without authorizing a broadcast", () => {
+    const firstPolicy = createFirstPurchasePolicy(contract, productId);
+    assert.equal(firstPolicy.maxPerPurchase, firstPurchaseBudget.maxProductPriceWei);
+    assert.equal(firstPolicy.maxPurchasesPerDay, 1);
+    assert.equal(firstPurchaseBudget.maxTotalExposureWei, firstPurchaseBudget.maxProductPriceWei + firstPurchaseBudget.maxTransactionFeeWei);
+  });
+
   it("never invokes Nebius inference unless explicitly enabled", async () => {
     let calls = 0;
     const request = async () => { calls += 1; return new Response(); };

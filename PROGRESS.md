@@ -79,3 +79,4 @@
 - Agent: durable DuckDB spend ledger preserves reserved/submitted budget usage across restarts; Nebius calls remain opt-in and purchase broadcasts require explicit per-call authorization.
 - API: shared browser-safe typed contracts, `/api/v1/status`, and entitlement submission/replay responses are implemented and tested. JSON BigInts are serialized as decimal strings at the HTTP boundary.
 - Demo: `apps/web` is production-built Next.js, exposes safe fixture-labelled `/api/v1` routes, and is configured for Vercel from the repository root. Local HTTP verification passed for status and Human Pulse endpoints.
+- First purchase: a non-executing plan caps one Monad testnet intelligence product at `0.005 MON` and its purchase fee at `0.002 MON` (`0.007 MON` maximum exposure). Product configuration, fresh preflight, and separate Nebius/broadcast approvals remain mandatory.
