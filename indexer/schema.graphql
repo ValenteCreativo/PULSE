@@ -16,3 +16,10 @@ type TopicDemand {
   totalAmount: BigInt!
   lastPurchaseTimestamp: BigInt!
 }
+
+type BuyerDemand {
+  id: ID! # lowercase wallet address
+  purchases: BigInt!
+  totalAmount: BigInt!
+  lastPurchaseTimestamp: BigInt!
+}

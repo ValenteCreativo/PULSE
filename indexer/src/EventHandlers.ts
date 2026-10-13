@@ -23,5 +23,13 @@ indexer.onEvent(
       totalAmount: (demand?.totalAmount ?? 0n) + event.params.amount,
       lastPurchaseTimestamp: event.block.timestamp,
     });
+    const buyerId = event.params.buyer.toLowerCase();
+    const buyer = await context.BuyerDemand.get(buyerId);
+    context.BuyerDemand.set({
+      id: buyerId,
+      purchases: (buyer?.purchases ?? 0n) + 1n,
+      totalAmount: (buyer?.totalAmount ?? 0n) + event.params.amount,
+      lastPurchaseTimestamp: event.block.timestamp,
+    });
   },
 );

@@ -1,0 +1,17 @@
+query RecentPurchases($limit: Int!) {
+  Purchase(limit: $limit, order_by: { timestamp: desc }) {
+    buyer topicId productId amount purchaseId transactionHash blockNumber timestamp
+  }
+}
+
+query DemandByTopic {
+  TopicDemand(order_by: { totalAmount: desc }) {
+    id purchases totalAmount lastPurchaseTimestamp
+  }
+}
+
+query DemandByBuyer {
+  BuyerDemand(order_by: { totalAmount: desc }) {
+    id purchases totalAmount lastPurchaseTimestamp
+  }
+}

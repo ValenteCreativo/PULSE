@@ -3,6 +3,8 @@ import { describe, it } from "node:test";
 import { createPulseApi, healthSchema } from "../src/api/server.js";
 import { demoRecords } from "../src/fixtures/demo-records.js";
 import { computeHumanPulse, humanPulseSchema } from "../src/pulse/human-pulse.js";
+import { agentPulseSchema } from "../src/pulse/agent-pulse.js";
+import { attentionGapSchema } from "../src/pulse/attention-gap.js";
 
 const api = createPulseApi(computeHumanPulse(demoRecords, { mode: "fixture", processedAt: new Date("2026-10-12T00:00:00Z") }));
 
@@ -21,6 +23,13 @@ describe("Intelligence API", () => {
     const body = await catalog.json() as { products: Array<{ availability: string; price: null }> };
     assert.ok(body.products.length > 0);
     assert.ok(body.products.every((product) => product.availability === "payment-not-yet-enabled" && product.price === null));
+  });
+
+  it("returns explicit insufficient-data Agent Pulse and Attention Gap states", async () => {
+    const agent = await api(new Request("http://pulse.local/api/v1/agent-pulse"));
+    assert.equal(agentPulseSchema.parse(await agent.json()).status, "insufficient-data");
+    const gap = await api(new Request("http://pulse.local/api/v1/attention-gap"));
+    assert.equal(attentionGapSchema.parse(await gap.json()).status, "unavailable");
   });
 
   it("returns explicit errors for unsupported routes and methods", async () => {
