@@ -13,9 +13,9 @@ export const verifiedPurchaseSchema = z.object({
   buyer: address,
   topicId: hex32,
   productId: hex32,
-  amount: z.bigint().positive(),
-  blockNumber: z.bigint().nonnegative(),
-  confirmations: z.bigint().positive(),
+  amount: z.coerce.bigint().positive(),
+  blockNumber: z.coerce.bigint().nonnegative(),
+  confirmations: z.coerce.bigint().positive(),
   verifiedAt: z.string().datetime(),
 });
 export type VerifiedPurchase = z.infer<typeof verifiedPurchaseSchema>;

@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
+import { mkdtemp } from "node:fs/promises";
 import { describe, it } from "node:test";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { AutonomousBuyerAgent, NebiusBuyerModel, PaidInferenceDisabledError, type BuyerModel } from "../src/agent/nebius-buyer.js";
 import { PurchaseTool } from "../src/agent/purchase-tool.js";
-import { SpendLedger, SpendingPolicyError, type PurchaseIntent, type SpendingPolicy } from "../src/agent/spending.js";
+import { DuckDbSpendLedger, SpendLedger, SpendingPolicyError, type PurchaseIntent, type SpendingPolicy } from "../src/agent/spending.js";
 
 const contract = "0x0000000000000000000000000000000000000abc";
 const productId = `0x${"1".repeat(64)}`;
@@ -35,7 +38,7 @@ describe("autonomous buyer safeguards", () => {
     const result = await tool.execute(intent, purchaseId);
     assert.deepEqual({ mode: result.mode, status: result.status, transactionHash: result.transactionHash }, { mode: "dry-run", status: "planned", transactionHash: null });
     assert.equal(broadcasts, 0);
-    assert.equal(ledger.entries().length, 0);
+    assert.equal((await ledger.entries()).length, 0);
   });
 
   it("enforces contract, product, count, and aggregate spend caps before broadcast", async () => {
@@ -51,5 +54,15 @@ describe("autonomous buyer safeguards", () => {
     const result = await new AutonomousBuyerAgent(model, new PurchaseTool(policy, new SpendLedger())).run();
     assert.equal(result.status, "planned");
     assert.equal(result.mode, "dry-run");
+  });
+
+  it("persists submitted spending across a restart and keeps it inside the daily cap", async () => {
+    const database = join(await mkdtemp(join(tmpdir(), "pulse-agent-spend-")), "spend.duckdb");
+    const first = await DuckDbSpendLedger.open(database);
+    const tool = new PurchaseTool(policy, first, { broadcast: async () => ({ transactionHash: "0xabc" }) });
+    await tool.execute(intent, purchaseId, { allowBroadcast: true });
+    assert.equal((await first.entries())[0]?.status, "submitted");
+    const restarted = await DuckDbSpendLedger.open(database);
+    await assert.rejects(() => restarted.reserve(intent, policy), SpendingPolicyError);
   });
 });

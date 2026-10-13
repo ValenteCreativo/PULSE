@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { purchaseIntentSchema, SpendLedger, type PurchaseIntent, type SpendingPolicy } from "./spending.js";
+import { purchaseIntentSchema, type PurchaseIntent, type SpendingLedger, type SpendingPolicy } from "./spending.js";
 
 const purchaseIdSchema = z.string().regex(/^0x[0-9a-fA-F]{64}$/);
 
@@ -19,7 +19,7 @@ export type PurchaseExecution = z.infer<typeof purchaseExecutionSchema>;
 export class PurchaseTool {
   constructor(
     private readonly policy: SpendingPolicy,
-    private readonly ledger: SpendLedger,
+    private readonly ledger: SpendingLedger,
     private readonly broadcaster?: PurchaseBroadcaster,
   ) {}
 
@@ -38,9 +38,10 @@ export class PurchaseTool {
     const reservation = await this.ledger.reserve(intent, this.policy);
     try {
       const result = await this.broadcaster.broadcast({ ...intent, purchaseId });
+      await this.ledger.markSubmitted(reservation.id);
       return purchaseExecutionSchema.parse({ mode: "broadcast", status: "submitted", purchaseId, transactionHash: result.transactionHash, reason: null });
     } catch (error) {
-      this.ledger.release(reservation.id);
+      await this.ledger.release(reservation.id);
       throw error;
     }
   }

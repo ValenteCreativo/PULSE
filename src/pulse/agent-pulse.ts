@@ -6,7 +6,7 @@ export const agentPulseSchema = z.object({
   observationWindow: z.object({ start: z.string().nullable(), end: z.string().nullable() }),
   registeredAgentWallets: z.number().int().nonnegative(), attributablePurchases: z.number().int().nonnegative(),
   limitations: z.array(z.string()),
-  topics: z.array(z.object({ topicId: z.string(), purchases: z.number().int(), uniqueBuyers: z.number().int(), totalAmount: z.bigint(), demandScore: z.number().min(0).max(1) })),
+  topics: z.array(z.object({ topicId: z.string(), purchases: z.number().int(), uniqueBuyers: z.number().int(), totalAmount: z.coerce.bigint(), demandScore: z.number().min(0).max(1) })),
 });
 export type AgentPulse = z.infer<typeof agentPulseSchema>;
 
