@@ -31,10 +31,10 @@
 
 ## Milestone 4 — local Monad contract and Envio event scaffold
 
-- Status: complete locally; undeployed
+- Status: deployed to Monad testnet; no intelligence purchases executed
 - Implemented: `PulseIntelligenceMarket`, exact-price purchases, topic/product/purchase binding, replay prevention, indexable purchase event, and inactive Envio schema/handler scaffold.
 - Test evidence: Solidity compiles and is exercised in an in-memory EVM. The test validates product setup, wrong-amount rejection, successful event emission, and duplicate purchase rejection.
-- Safety: no wallet, RPC transaction, contract deployment, payment, Envio token, or paid inference was used.
+- Deployment evidence: contract `0x0a14814aa3d4fd9c2e17090af23a655204993bff`, transaction `0x6817388a430dc71f45039ceedcced17dc9e876967e9403ef72e7786a3d7d3d2b`, block `70583679`, actual fee `0.037816092 MON`. Runtime bytecode was verified. No purchase, Envio token, or paid inference was used.
 
 ## Next
 
@@ -48,4 +48,11 @@
 - Implemented: strict confirmed-receipt verifier (chain, recipient contract, buyer, product, topic, amount, event and confirmations), durable DuckDB entitlement store with transaction/purchase uniqueness, and concurrent replay tests.
 - Implemented: Agent Pulse uses only registered wallets; Attention Gap returns `unavailable` without enough attributable data and `preliminary` at low volume. Typed API paths expose both states.
 - Implemented: ABI-alignment tests, Envio aggregate schema/queries, guarded Monad deployment script, local artifact preparation, and a deployment checklist.
-- Test evidence: `pnpm check`, `pnpm test` (18 tests), and `pnpm contract:prepare` pass. No test calls an RPC or spends MON.
+- Test evidence: `pnpm check`, `pnpm test` (19 tests), and `pnpm contract:prepare` pass. No test calls an RPC or spends MON.
+
+## Milestone 6 — approved Monad testnet deployment
+
+- Status: complete
+- Guardrails verified immediately before broadcast: chain `10143`, intended deployer, constructor with no arguments, compiled bytecode, and estimated maximum fee `0.037816092 MON` below the `0.10 MON` authorization cap.
+- Broadcast count: one deployment transaction. Receipt status was successful after two confirmations; no retry was performed.
+- Envio configuration now starts at the contract deployment block and targets its deployed address. It remains unstarted until an `ENVIO_API_TOKEN` is configured.

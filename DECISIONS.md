@@ -27,3 +27,7 @@ The Envio HyperIndex configuration captures the contract event schema using Mona
 ## 2026-10-12 — Entitlements verify logs, not submitted claims
 
 The server accepts an entitlement only after a successful receipt is on the expected chain, has the configured confirmation depth, and contains a matching `IntelligencePurchased` event emitted by the configured contract. Buyer, product, topic, amount, transaction hash, and purchase ID are all compared against the receipt. The local durable store treats both transaction hash and purchase ID as unique, preventing duplicate redemption across restarts.
+
+## 2026-10-12 — Monad testnet contract deployment recorded
+
+`PulseIntelligenceMarket` was deployed once to Monad testnet (chain 10143) at `0x0a14814aa3d4fd9c2e17090af23a655204993bff` in block `70583679`. The transaction consumed `0.037816092 MON`, below the explicit `0.10 MON` cap. Runtime bytecode matched the locally compiled artifact after immutable-reference normalization. This records a contract deployment only; no intelligence product has been configured or purchased.

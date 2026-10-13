@@ -49,3 +49,23 @@ PULSE_DEPLOY_CONFIRM=MONAD_TESTNET pnpm deploy:monad-testnet
 ```
 
 The command refuses missing credentials, an invalid private key, or an RPC that is not chain 10143. It makes a real transaction once these checks pass.
+
+## Verified deployment evidence — Monad testnet
+
+- Contract: `PulseIntelligenceMarket`
+- Chain ID: `10143` (Monad Testnet)
+- Contract address: `0x0a14814aa3d4fd9c2e17090af23a655204993bff`
+- Deployment transaction: `0x6817388a430dc71f45039ceedcced17dc9e876967e9403ef72e7786a3d7d3d2b`
+- Block: `70583679`
+- Constructor arguments: none
+- Gas limit / used: `370746` / `370746`
+- Actual transaction fee: `0.037816092 MON` (below the authorized `0.10 MON` cap)
+- Runtime bytecode: verified against the compiled artifact after normalizing compiler immutable references.
+- Explorer: `https://testnet.monadvision.com/tx/0x6817388a430dc71f45039ceedcced17dc9e876967e9403ef72e7786a3d7d3d2b`
+
+Add the public address to the local Git-ignored `.env` before enabling server verification:
+
+```dotenv
+PULSE_CONTRACT_ADDRESS=0x0a14814aa3d4fd9c2e17090af23a655204993bff
+PULSE_MIN_CONFIRMATIONS=2
+```
