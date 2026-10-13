@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=./node_modules/envio/evm.schema.json
 name: pulse-intelligence-market
 description: Indexes PULSE purchase entitlements on Monad testnet after deployment.
+handlers: src
 
 contracts:
   - name: PulseIntelligenceMarket
