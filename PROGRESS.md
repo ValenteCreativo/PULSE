@@ -71,3 +71,11 @@
 - Cloud readiness: `indexer/` is self-contained, uses exact dependency versions, and targets the deployed Monad testnet contract from block `70583679`. Generated Envio type files are intentionally local-only.
 - Agent implementation: added a Nebius buyer model boundary that is disabled by default; a purchase tool that produces dry-run plans unless a per-call broadcast authorization is supplied; and atomic per-product, per-purchase, daily-count, and daily-MON budget guards. The default agent cannot invoke paid inference, sign, broadcast, or reserve funds.
 - Test evidence: `pnpm check`, `pnpm test` (23 tests), `indexer` code generation, and indexer type checking pass. No RPC write, Nebius inference, MON spend, or intelligence purchase was performed.
+
+## Milestone 9 — hackathon delivery integration
+
+- Status: GitHub published; Cloud dashboard authorization and Vercel import remain operator actions.
+- GitHub: `main` is published at `https://github.com/ValenteCreativo/PULSE` after a final lightweight secret check.
+- Agent: durable DuckDB spend ledger preserves reserved/submitted budget usage across restarts; Nebius calls remain opt-in and purchase broadcasts require explicit per-call authorization.
+- API: shared browser-safe typed contracts, `/api/v1/status`, and entitlement submission/replay responses are implemented and tested. JSON BigInts are serialized as decimal strings at the HTTP boundary.
+- Demo: `apps/web` is production-built Next.js, exposes safe fixture-labelled `/api/v1` routes, and is configured for Vercel from the repository root. Local HTTP verification passed for status and Human Pulse endpoints.
