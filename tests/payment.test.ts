@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { encodeAbiParameters, encodeEventTopics, keccak256, toHex, type Hex } from "viem";
-import { InMemoryEntitlementStore, PaymentReplayError } from "../src/payment/entitlements.js";
+import { mkdtemp } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { DuckDbEntitlementStore, InMemoryEntitlementStore, PaymentReplayError } from "../src/payment/entitlements.js";
 import { PaymentVerificationError, PaymentVerifier, purchaseEvent, type PaymentRpc } from "../src/payment/verify.js";
 
 const contract = "0x0000000000000000000000000000000000000abc";
@@ -35,5 +38,14 @@ describe("payment entitlement verification", () => {
     await assert.rejects(() => new PaymentVerifier(rpc({ head: 10n }), { chainId: 10143, contractAddress: contract, minConfirmations: 2n }).verify(request), /Need 2 confirmations/);
     await assert.rejects(() => new PaymentVerifier(rpc({ status: "reverted" }), { chainId: 10143, contractAddress: contract, minConfirmations: 2n }).verify(request), /reverted/);
     await assert.rejects(() => new PaymentVerifier(rpc({ logs: [] }), { chainId: 10143, contractAddress: contract, minConfirmations: 2n }).verify(request), /No matching/);
+  });
+
+  it("persists a confirmed entitlement and prevents a restart-safe replay", async () => {
+    const verified = await new PaymentVerifier(rpc(), { chainId: 10143, contractAddress: contract, minConfirmations: 2n }).verify(request);
+    const database = join(await mkdtemp(join(tmpdir(), "pulse-entitlements-")), "entitlements.duckdb");
+    const store = await DuckDbEntitlementStore.open(database);
+    const entitlement = await store.redeem(verified);
+    assert.equal((await store.get(entitlement.entitlementId))?.transactionHash, transactionHash);
+    await assert.rejects(() => store.redeem(verified), PaymentReplayError);
   });
 });

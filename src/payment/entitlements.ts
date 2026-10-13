@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { DuckDBInstance } from "@duckdb/node-api";
 import { z } from "zod";
 
 const hex32 = z.string().regex(/^0x[a-fA-F0-9]{64}$/);
@@ -72,5 +73,46 @@ export class InMemoryEntitlementStore implements EntitlementStore {
 
   async get(entitlementId: string): Promise<Entitlement | null> {
     return this.byId.get(entitlementId) ?? null;
+  }
+}
+
+/** Durable single-node entitlement store. Unique purchase/transaction constraints provide replay protection across restarts. */
+export class DuckDbEntitlementStore implements EntitlementStore {
+  private constructor(private readonly connection: Awaited<ReturnType<DuckDBInstance["connect"]>>) {}
+
+  static async open(path: string): Promise<DuckDbEntitlementStore> {
+    const instance = await DuckDBInstance.create(path);
+    const connection = await instance.connect();
+    await connection.run(`CREATE TABLE IF NOT EXISTS pulse_entitlements (
+      entitlement_id VARCHAR PRIMARY KEY, transaction_hash VARCHAR UNIQUE NOT NULL, purchase_id VARCHAR UNIQUE NOT NULL,
+      chain_id INTEGER NOT NULL, contract_address VARCHAR NOT NULL, buyer VARCHAR NOT NULL, topic_id VARCHAR NOT NULL,
+      product_id VARCHAR NOT NULL, amount VARCHAR NOT NULL, block_number VARCHAR NOT NULL, confirmations VARCHAR NOT NULL,
+      verified_at VARCHAR NOT NULL, redeemed_at VARCHAR NOT NULL, status VARCHAR NOT NULL
+    )`);
+    return new DuckDbEntitlementStore(connection);
+  }
+
+  async redeem(purchaseInput: VerifiedPurchase): Promise<Entitlement> {
+    const purchase = verifiedPurchaseSchema.parse(purchaseInput);
+    const entitlement = entitlementSchema.parse({ ...purchase, entitlementId: randomUUID(), status: "confirmed", redeemedAt: new Date().toISOString() });
+    const result = await this.connection.runAndReadAll(
+      `INSERT INTO pulse_entitlements VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT DO NOTHING RETURNING entitlement_id`,
+      [entitlement.entitlementId, entitlement.transactionHash.toLowerCase(), entitlement.purchaseId.toLowerCase(), entitlement.chainId, entitlement.contractAddress.toLowerCase(), entitlement.buyer.toLowerCase(), entitlement.topicId.toLowerCase(), entitlement.productId.toLowerCase(), entitlement.amount.toString(), entitlement.blockNumber.toString(), entitlement.confirmations.toString(), entitlement.verifiedAt, entitlement.redeemedAt, entitlement.status],
+    );
+    if (result.getRowObjectsJS().length !== 1) throw new PaymentReplayError();
+    return entitlement;
+  }
+
+  async get(entitlementId: string): Promise<Entitlement | null> {
+    const result = await this.connection.runAndReadAll("SELECT * FROM pulse_entitlements WHERE entitlement_id = ?", [entitlementId]);
+    const row = result.getRowObjectsJS()[0] as Record<string, unknown> | undefined;
+    if (!row) return null;
+    return entitlementSchema.parse({
+      entitlementId: row.entitlement_id, transactionHash: row.transaction_hash, purchaseId: row.purchase_id, chainId: row.chain_id,
+      contractAddress: row.contract_address, buyer: row.buyer, topicId: row.topic_id, productId: row.product_id,
+      amount: BigInt(String(row.amount)), blockNumber: BigInt(String(row.block_number)), confirmations: BigInt(String(row.confirmations)),
+      verifiedAt: row.verified_at, redeemedAt: row.redeemed_at, status: row.status,
+    });
   }
 }

@@ -12,7 +12,9 @@
     "test": "pnpm build:core && node --test .pulse-build/tests/*.test.js",
     "dataset:preflight": "pnpm build:core && node .pulse-build/src/data/preflight.js",
     "dataset:sample": "pnpm build:core && node .pulse-build/src/data/cli.js",
-    "pulse:demo:dry": "pnpm build:core && node .pulse-build/src/demo/dry-run.js"
+    "pulse:demo:dry": "pnpm build:core && node .pulse-build/src/demo/dry-run.js",
+    "contract:prepare": "pnpm build:core && node .pulse-build/scripts/prepare-deployment.js",
+    "deploy:monad-testnet": "pnpm build:core && node .pulse-build/scripts/deploy-monad-testnet.js"
   },
   "dependencies": {
     "@duckdb/node-api": "1.5.6-r.1",

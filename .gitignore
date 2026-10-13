@@ -7,6 +7,7 @@ dist/
 coverage/
 .next/
 data/*.duckdb
+.pulse-data/
 data/raw/
 data/samples/
 artifacts/

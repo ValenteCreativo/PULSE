@@ -41,3 +41,11 @@
 - Obtain an approved, bounded data source or a legal/product decision to use a research-only `utopiar` sample, then build the DuckDB `httpfs` row-group sampler.
 - Add server-side payment confirmation and entitlement storage before any testnet deployment.
 - After an approved deployment, set the verified address/block in `indexer/config.yaml`, configure Envio credentials, and implement registered-demo-agent attribution.
+
+## Milestone 5 — economic core and deployment readiness
+
+- Status: complete locally; deployment blocked by design
+- Implemented: strict confirmed-receipt verifier (chain, recipient contract, buyer, product, topic, amount, event and confirmations), durable DuckDB entitlement store with transaction/purchase uniqueness, and concurrent replay tests.
+- Implemented: Agent Pulse uses only registered wallets; Attention Gap returns `unavailable` without enough attributable data and `preliminary` at low volume. Typed API paths expose both states.
+- Implemented: ABI-alignment tests, Envio aggregate schema/queries, guarded Monad deployment script, local artifact preparation, and a deployment checklist.
+- Test evidence: `pnpm check`, `pnpm test` (18 tests), and `pnpm contract:prepare` pass. No test calls an RPC or spends MON.

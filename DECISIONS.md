@@ -23,3 +23,7 @@ Monad documents testnet as EVM-compatible with chain ID 10143 and native MON. Cu
 ## 2026-10-12 — Envio is scaffolded but intentionally inactive
 
 The Envio HyperIndex configuration captures the contract event schema using Monad testnet chain ID 10143. Its address is an inert zero-address placeholder until an approved deployment exists. Current Envio documentation requires an API token for local HyperSync-backed workflows; no token was requested or used.
+
+## 2026-10-12 — Entitlements verify logs, not submitted claims
+
+The server accepts an entitlement only after a successful receipt is on the expected chain, has the configured confirmation depth, and contains a matching `IntelligencePurchased` event emitted by the configured contract. Buyer, product, topic, amount, transaction hash, and purchase ID are all compared against the receipt. The local durable store treats both transaction hash and purchase ID as unique, preventing duplicate redemption across restarts.

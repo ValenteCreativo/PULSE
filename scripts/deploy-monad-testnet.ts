@@ -1,0 +1,20 @@
+import { createPublicClient, createWalletClient, http, type Chain } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { compilePulseMarket } from "../src/contract/compile.js";
+
+const expectedChainId = 10143;
+if (process.env.PULSE_DEPLOY_CONFIRM !== "MONAD_TESTNET") throw new Error("Refusing deployment: set PULSE_DEPLOY_CONFIRM=MONAD_TESTNET only after explicit operator approval.");
+const rpcUrl = process.env.MONAD_RPC_URL;
+const privateKey = process.env.PULSE_DEPLOYER_PRIVATE_KEY;
+if (!rpcUrl || !privateKey) throw new Error("MONAD_RPC_URL and PULSE_DEPLOYER_PRIVATE_KEY are required for deployment.");
+if (!/^0x[0-9a-fA-F]{64}$/.test(privateKey)) throw new Error("PULSE_DEPLOYER_PRIVATE_KEY must be a 32-byte hex private key.");
+const chain: Chain = { id: expectedChainId, name: "Monad Testnet", nativeCurrency: { name: "MON", symbol: "MON", decimals: 18 }, rpcUrls: { default: { http: [rpcUrl] } } };
+const publicClient = createPublicClient({ chain, transport: http(rpcUrl) });
+if (await publicClient.getChainId() !== expectedChainId) throw new Error(`Refusing deployment: RPC is not Monad testnet chain ${expectedChainId}.`);
+const account = privateKeyToAccount(privateKey as `0x${string}`);
+const walletClient = createWalletClient({ account, chain, transport: http(rpcUrl) });
+const artifact = await compilePulseMarket();
+const hash = await walletClient.deployContract({ abi: artifact.abi as [], bytecode: artifact.bytecode });
+const receipt = await publicClient.waitForTransactionReceipt({ hash, confirmations: 2 });
+if (receipt.status !== "success" || !receipt.contractAddress) throw new Error(`Deployment failed or missing contract address: ${hash}`);
+process.stdout.write(JSON.stringify({ chainId: expectedChainId, transactionHash: hash, contractAddress: receipt.contractAddress, blockNumber: receipt.blockNumber.toString() }, null, 2) + "\n");
