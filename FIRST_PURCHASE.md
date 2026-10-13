@@ -19,3 +19,5 @@ This is a Monad **testnet** plan only. Nothing in this file signs, sends, or pay
 5. Submit through the durable ledger-backed purchase tool, wait for confirmations, then redeem the receipt through the replay-safe entitlement endpoint.
 
 No autonomous path may bypass these steps.
+
+After filling only the public/identifier preflight values in local `.env`, run `pnpm purchase:preflight`. It cannot sign or broadcast a transaction.

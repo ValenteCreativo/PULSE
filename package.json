@@ -17,6 +17,7 @@
     "web:build": "pnpm --dir apps/web build",
     "contract:prepare": "pnpm build:core && node .pulse-build/scripts/prepare-deployment.js",
     "deploy:preflight": "pnpm build:core && node --env-file=.env .pulse-build/scripts/deployment-preflight.js",
+    "purchase:preflight": "pnpm build:core && node --env-file=.env .pulse-build/scripts/purchase-preflight.js",
     "deploy:monad-testnet": "pnpm build:core && node --env-file=.env .pulse-build/scripts/deploy-monad-testnet.js"
   },
   "dependencies": {
