@@ -105,17 +105,8 @@ export function generateMetadata({
       ...(twitterHandle ? { site: twitterHandle, creator: twitterHandle } : {}),
       images: [{ url: ogImage, alt: siteConfig.ogImageAlt }],
     },
-    icons: {
-      icon: [
-        { url: "/icon.svg", type: "image/svg+xml" },
-        { url: "/favicon.ico", sizes: "48x48" },
-        { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-        { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      ],
-      apple: [
-        { url: "/apple-icon-180x180.png", sizes: "180x180", type: "image/png" },
-      ],
-    },
+    // Icons come from the App Router file convention (src/app/icon.png), so no
+    // manual icon list here — the old template favicons are gone.
     manifest: "/manifest.json",
     robots: {
       index: true,

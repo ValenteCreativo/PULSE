@@ -64,15 +64,18 @@ export const SiteHeader = ({
     className="pointer-events-none fixed inset-x-0 top-3 z-40 flex justify-center font-sans sm:top-4"
   >
     <div className="pointer-events-auto relative h-[2.25rem] w-[13.75rem] rounded-md border border-nav-surface bg-nav-surface backdrop-blur-[3px] sm:h-[2.5625rem] sm:w-[17.4375rem]">
-      <Link
-        href="/"
+      <a
+        href="https://github.com/ValenteCreativo/pulse"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="PULSE on GitHub"
         className="absolute top-[0.5625rem] left-[2.125rem] -translate-x-1/2 text-[0.75rem] leading-[1.2] font-semibold whitespace-nowrap text-nav-text transition-opacity duration-[var(--duration-fast)] ease-entrance hover:opacity-70 sm:top-[0.6875rem] sm:left-[2.65625rem] sm:text-[0.875rem]"
       >
         {homeLabel}
-      </Link>
+      </a>
 
-      <button
-        type="button"
+      <Link
+        href="/menu"
         className="absolute -top-px left-1/2 flex h-[2.25rem] w-[5.5rem] -translate-x-1/2 items-center gap-[0.375rem] rounded-md bg-nav-accent pr-4 pl-[1.25rem] transition-opacity duration-[var(--duration-fast)] ease-entrance hover:opacity-90 sm:h-[2.5625rem] sm:w-[6.8125rem] sm:gap-[0.4375rem] sm:pr-6 sm:pl-[1.5625rem]"
       >
         <span className="text-[0.75rem] leading-[1.2] font-semibold whitespace-nowrap text-nav-accent-ink sm:text-[0.875rem]">
@@ -88,7 +91,7 @@ export const SiteHeader = ({
           <span className="absolute inset-x-0 top-[0.1875rem] h-px bg-nav-accent-ink" />
           <span className="absolute inset-x-0 top-[0.375rem] h-px bg-nav-accent-ink" />
         </span>
-      </button>
+      </Link>
 
       {contactHref ? (
         <Link

@@ -1,6 +1,17 @@
 import type { NextConfig } from "next";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 const nextConfig: NextConfig = {
+  // Keep both the production trace and Turbopack rooted at this repository,
+  // not at an unrelated parent lockfile.
+  outputFileTracingRoot: repositoryRoot,
+  turbopack: {
+    root: repositoryRoot,
+  },
+
   // Drop the `X-Powered-By: Next.js` response header.
   poweredByHeader: false,
 

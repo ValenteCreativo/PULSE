@@ -37,9 +37,9 @@ export function getSiteStructuredData() {
         url: siteConfig.url,
         logo: {
           "@type": "ImageObject",
-          url: `${siteConfig.url}/icon-512.png`,
-          width: 512,
-          height: 512,
+          url: `${siteConfig.url}/icon.png`,
+          width: 1024,
+          height: 1024,
         },
         image: `${siteConfig.url}${siteConfig.ogImage}`,
       },

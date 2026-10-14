@@ -1,16 +1,14 @@
 /**
  * PULSE integration anchor — DOCUMENTATION ONLY (no live wiring yet).
  *
- * This landing page (`apps/landing`) is the standalone product face. The real
- * PULSE backend lives in the separate `apps/web` service and is intentionally
- * NOT imported here, so the two stay isolated and the backend keeps working
- * untouched.
+ * This landing page (`apps/landing`) is the product face. Its public,
+ * fixture-only API adapter is co-located here; the typed PULSE core remains in
+ * the repository's separate data, API, contract, indexer, and agent modules.
  *
  * TODO(pulse): when the landing is pointed at the real backend, the agent-facing
- * intelligence API is served by `apps/web` under `/api/v1/*` (e.g.
- * `/api/v1/intelligence/catalog` for discovery). Reach it via a same-origin
- * proxy or an absolute URL — the exact base is TBD and belongs in an env var
- * (e.g. `NEXT_PUBLIC_PULSE_API_URL`), never hardcoded.
+ * intelligence API is served same-origin under `/api/v1/*` (e.g.
+ * `/api/v1/intelligence/catalog` for discovery). Its public responses are
+ * deterministic fixture data and never invoke paid operations.
  *
  * TODO(pulse): the "pay in MON on Monad testnet" step settles against the Monad
  * testnet contract `0x0a14814aa3d4fd9c2e17090af23a655204993bff` (chain id

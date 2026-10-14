@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { SiteHeader } from "@/components/common/header/site-header";
+import { ClosingCta } from "@/components/common/closing-cta";
 import { HeroCopy } from "@/components/common/hero/hero-copy";
 import { SceneHud } from "@/components/common/hud/scene-hud";
 import { Preloader } from "@/components/common/preloader/preloader";
@@ -117,6 +118,9 @@ export const HomeView = ({ robot = false }: { robot?: boolean }) => {
           primary={homeHero.primaryCta}
           secondary={homeHero.secondaryCta}
         />
+
+        {/* The copy-paste API + pay-in-MON CTA, at the very end of the scroll. */}
+        <ClosingCta />
       </section>
     </main>
   );

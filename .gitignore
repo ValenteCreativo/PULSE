@@ -17,3 +17,9 @@ indexer/.env
 indexer/.envio/
 indexer/envio-env.d.ts
 *.log
+
+# Demo recording tooling / assets — not part of the deployable product
+demo-remotion/
+demo-assets/
+demo-evidence/
+scripts/record-demo.sh

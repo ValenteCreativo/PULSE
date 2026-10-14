@@ -141,14 +141,15 @@ export const homeHero: HomeHeroContent = {
   headline: "The intelligence marketplace for AI creators.",
   intro:
     "PULSE turns the internet's attention into intelligence AI creators can buy and act on.",
-  // No `href` on either: no route exists yet, so the label renders as a label.
-  primaryCta: { label: "Start building" },
-  secondaryCta: { label: "For Agents" },
+  // Routes now exist, so these render as real links.
+  primaryCta: { label: "Start building", href: "/contact" },
+  secondaryCta: { label: "For Agents", href: "/agents" },
   nav: {
     label: "Primary",
     home: "< >",
     menu: "Menu",
     contact: "Contact",
+    contactHref: "/contact",
   },
   recordingLabel: "REC",
   sceneLabel:
@@ -190,7 +191,7 @@ export const homeHero: HomeHeroContent = {
     {
       text: "Everyone is building agents that create.",
       position: [-0.28, 1.6, -7.6],
-      size: 0.34,
+      size: 0.22,
       fadeIn: [5, 3.2],
     },
     {
@@ -218,7 +219,7 @@ export const homeHero: HomeHeroContent = {
     // TODO(pulse): the demo's "copy ''' … ''' and pay in MON on Monad testnet"
     // moment lands here. Drop a display-only, copy-paste snippet block beside
     // this closing copy — never a code path that broadcasts a tx or spends
-    // funds. The real purchase flow lives in apps/web; see src/lib/pulse.ts.
+    // funds. The public fixture API is co-located with this landing; see src/lib/pulse.ts.
     heading: "Buy intelligence. Pay in MON.",
     lead: "The marketplace between human attention and autonomous creation.",
   },
@@ -227,8 +228,10 @@ export const homeHero: HomeHeroContent = {
     label: "Agents are watching",
   },
   cases: {
-    label: "Human attention signals",
-    heading: "Human Pulse",
+    label: "What PULSE reads",
+    // The carousel IS the "what is PULSE" moment: each screen is a kind of human
+    // attention PULSE turns into intelligence an agent can read.
+    heading: "This is PULSE",
     previous: "Previous",
     next: "Next",
     explore: "Explore",
@@ -237,37 +240,31 @@ export const homeHero: HomeHeroContent = {
     // `scroll.carousel.members` in `lib/scene/config.ts`. No `href`: these are
     // attention-intelligence themes, not case-study routes.
     items: [
-      { name: "Formats taking off", tags: ["Short-form", "Trend velocity", "Emerging"] },
-      { name: "Sounds that spread", tags: ["Audio", "Virality signal", "Adoption"] },
-      { name: "Watch-time patterns", tags: ["Retention", "Pacing", "Drop-off"] },
-      { name: "Engagement signals", tags: ["Comments", "Shares", "Saves"] },
-      { name: "What's trending now", tags: ["Topics", "Momentum", "Cross-platform"] },
+      { name: "Formats taking off", tags: ["Short-form", "Trend velocity", "What to make"] },
+      { name: "Sounds that spread", tags: ["Audio", "Virality signal", "What to use"] },
+      { name: "Watch-time patterns", tags: ["Retention", "Pacing", "How long"] },
+      { name: "Engagement signals", tags: ["Comments", "Shares", "What lands"] },
+      { name: "What's trending now", tags: ["Topics", "Momentum", "What's next"] },
     ],
   },
   about: {
     heading: "Agent Pulse",
     lead: [
-      { text: "Human Pulse is intelligence built from the signals people leave ", dim: true },
-      { text: "across TikTok, YouTube, Reddit, and the rest of the internet. " },
-      { text: "Agents buy that intelligence on Monad — ", dim: true },
-      { text: "and every purchase is a transaction that reveals what AI creators want to understand. " },
-      {
-        text: "Hackathon prototype — sample attention data, agent-facing APIs, and a Monad testnet marketplace.",
-        dim: true,
-      },
+      { text: "Agents buy intelligence on Monad. " },
+      { text: "Every purchase shows what they want to understand.", dim: true },
     ],
     cards: [
       {
         icon: "circle",
-        body: "Human Pulse. Intelligence built from the attention signals people leave across the internet.",
+        body: "Human Pulse — what people care about.",
       },
       {
         icon: "triangle",
-        body: "Agent Pulse. Agents buy that intelligence on Monad; every purchase is a signal of what they want to understand.",
+        body: "Agent Pulse — what agents pay to understand.",
       },
       {
         icon: "square",
-        body: "The marketplace between human attention and autonomous creation.",
+        body: "A marketplace between attention and creation.",
       },
     ],
   },

@@ -66,6 +66,7 @@ so none of it adds a dependency: `GLTFLoader` + `DRACOLoader`,
 | `zustand` | `^5.0.12` | Lightweight global state (scroll store) |
 | `resize-observer-polyfill` | `^1.5.1` | ResizeObserver fallback for animation hooks |
 | `zod` | `^4.4.3` | Schema validation — env (`src/env.ts`) + API payloads. See [[api-architecture]] |
+| `viem` | `^2.57.4` | ABI encoding/decoding and receipt-event verification for the isolated Monad testnet purchase demo. Server routes prepare and verify calls; no wallet secret is handled by the application. |
 
 See [[smooth-scroll]] and [[data-flow]].
 

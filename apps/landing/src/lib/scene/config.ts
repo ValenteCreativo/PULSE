@@ -649,7 +649,7 @@ export const sceneConfig: SceneConfig = {
     },
     floorColor: "#0b0f13",
     floorScale: 3,
-    screenGlow: 1.44,
+    screenGlow: 0.82,
     // Three lamps, not fifteen: every real-time light multiplies the fragment
     // cost of every material. Two cool ones from the flanking stacks, one warm
     // accent low on the left, matching the reference's single warm screen.

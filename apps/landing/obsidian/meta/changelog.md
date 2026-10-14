@@ -8,6 +8,12 @@ updated: 2026-10-05
 Chronological log of notable changes to the project. Newest first.
 This is a human-curated log — not a mirror of `git log`.
 
+## 2026-10-13 — PULSE Monad purchase demo
+
+- Added the isolated `/demo/purchase` route for a manual MetaMask purchase of the live `human-pulse:ai` Monad testnet product.
+- The browser calls only same-origin `/api/purchase-demo/*` routes. Those routes read the active onchain price, prepare the ABI-encoded `purchase` contract call, and verify the confirmed `IntelligencePurchased` receipt event.
+- Added `viem` for ABI encoding/decoding. No private key, seed phrase, or automatic transaction confirmation is handled by the application.
+
 ## 2026-10-06 — owner review (D-033): brand kit + full meta (optimize/pass-2)
 
 The owner: "generate favicon and opengraph and all required meta". Nothing else

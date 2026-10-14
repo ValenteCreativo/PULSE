@@ -4,7 +4,7 @@
 
 import { useRef } from "react";
 
-import { useElapsedReadout, useFpsReadout } from "@/hooks/use-readout";
+import { useFpsReadout } from "@/hooks/use-readout";
 
 export interface SceneHudProps {
   /** `[ dd / mm / yy ]`, rendered on the server so the first paint has it. */
@@ -62,10 +62,8 @@ const Corner = ({ className }: { className: string }) => (
  */
 export const SceneHud = ({ date, recordingLabel }: SceneHudProps) => {
   const fps = useRef<HTMLSpanElement>(null);
-  const elapsed = useRef<HTMLSpanElement>(null);
 
   useFpsReadout(fps);
-  useElapsedReadout(elapsed);
 
   return (
     <div
@@ -97,11 +95,11 @@ export const SceneHud = ({ date, recordingLabel }: SceneHudProps) => {
       <span className="absolute bottom-6 left-6 tabular-nums sm:bottom-8 sm:left-8">
         {date}
       </span>
-      <span
-        ref={elapsed}
-        className="absolute right-6 bottom-6 tabular-nums sm:right-8 sm:bottom-8"
-      >
-        [ 00 : 00 : 00 ]
+      <span className="absolute right-6 bottom-6 text-[0.6875rem] tracking-[0.1em] sm:right-8 sm:bottom-8 sm:text-[0.8125rem]">
+        POWERED BY <span className="text-nav-accent">MONAD × ENVIO</span>
+      </span>
+      <span className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 text-[0.6875rem] tracking-[0.1em] sm:bottom-8 sm:block sm:text-[0.8125rem]">
+        From Mexico with 🖤
       </span>
     </div>
   );
