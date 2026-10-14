@@ -10,6 +10,7 @@
   "scripts": {
     "check": "tsc --noEmit",
     "build:core": "tsc -p tsconfig.build.json",
+    "build": "pnpm --dir apps/landing build",
     "test": "pnpm build:core && node --test .pulse-build/tests/*.test.js",
     "dataset:preflight": "pnpm build:core && node .pulse-build/src/data/preflight.js",
     "dataset:sample": "pnpm build:core && node .pulse-build/src/data/cli.js",
