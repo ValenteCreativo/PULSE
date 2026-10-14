@@ -1,0 +1,189 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   TIER 1 — PRIMITIVES  (`--raw-*`)
+   Raw literal values. The only tier allowed to contain a hex/px/ms literal.
+   Never referenced in markup, never bound into @theme. Rename freely.
+   Grammar: --raw-<category>-<name>[-<shade>]
+   See obsidian/frontend/design-system.md → "Token naming convention".
+   --------------------------------------------------------------------------- */
+:root {
+  --raw-color-white: #ffffff;
+  /* The hero's chrome, read off the Figma frame (node 1097:251). */
+  --raw-color-mint-100: #dbfffe;
+  --raw-color-black: #000000;
+  --raw-color-neutral-100: #ededed;
+  --raw-color-neutral-900: #171717;
+  --raw-color-neutral-950: #0a0a0a;
+
+  --raw-duration-fast: 150ms;
+  --raw-duration-normal: 250ms;
+
+  /* Room the 3D scene is lit in — matched to the scene's own fog colour,
+     src/lib/scene/config.ts → environment.fog. */
+}
+
+/* ---------------------------------------------------------------------------
+   TIER 2 — SEMANTIC  (role names, no namespace prefix)
+   Purpose, not appearance. Always `var(--raw-*)` — never a literal.
+   This is the themeable layer: dark mode overrides happen HERE, which is why
+   these are separate from the @theme bindings below (see the note there).
+   Grammar: --<role>[-<variant>][-<state>]
+   --------------------------------------------------------------------------- */
+:root {
+  --background: var(--raw-color-white);
+  --foreground: var(--raw-color-neutral-900);
+
+  --duration-fast: var(--raw-duration-fast);
+  --duration-normal: var(--raw-duration-normal);
+
+  /* Chrome over the 3D scene: the frame's rules, its corners, and the nav pill.
+     The rules are half-strength white and the corners are full — that contrast
+     is the design's, not an accident, and it is what makes the corners read as
+     brackets rather than as part of the box. */
+  --hud-rule: color-mix(in srgb, var(--raw-color-white) 50%, transparent);
+  --hud-corner: var(--raw-color-white);
+  --hud-text: var(--raw-color-white);
+  --nav-surface: color-mix(in srgb, var(--raw-color-white) 20%, transparent);
+  --nav-text: var(--raw-color-white);
+  --nav-accent: var(--raw-color-mint-100);
+  --nav-accent-ink: var(--raw-color-black);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--raw-color-neutral-950);
+    --foreground: var(--raw-color-neutral-100);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   THEME BINDINGS — map semantic tokens into Tailwind namespaces.
+   Every entry is exactly `--<tw-namespace>-<role>: var(--<role>)`.
+   `inline` is required: it inlines the var() into each utility, so the
+   dark-mode overrides on the Tier 2 tokens above cascade. Binding a literal
+   here instead would freeze the value and break theming.
+
+   Only these namespaces generate utilities (verified against tailwindcss
+   v4.3.3): --color-* --spacing-* --radius-* --leading-* --tracking-* --text-*
+   --font-* --ease-* --breakpoint-* --container-* --shadow-* --blur-* --animate-*
+   NOTE: there is NO --duration-* namespace in v4 — `duration-fast` compiles to
+   nothing. Durations stay Tier 2 only and are used as duration-[var(--duration-fast)].
+   --------------------------------------------------------------------------- */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-chakra-petch);
+  /* The hollow display face — headings only. */
+  --font-display: var(--font-big-shoulders);
+
+  --color-hud-rule: var(--hud-rule);
+  --color-hud-corner: var(--hud-corner);
+  --color-hud-text: var(--hud-text);
+  --color-nav-surface: var(--nav-surface);
+  --color-nav-text: var(--nav-text);
+  --color-nav-accent: var(--nav-accent);
+  --color-nav-accent-ink: var(--nav-accent-ink);
+
+  /* Leading floor for clipped TextEngine reveals — see
+     obsidian/frontend/text-engine.md → "Alignment & line-height". */
+  --leading-display: 1.1;
+
+  --ease-entrance: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Normal block flow. The starter shipped this as a centred flex box to hold an
+   empty page; as a flex container it shrink-to-fits the ScrollLayout wrappers,
+   so any page whose content is absolutely positioned (a full-bleed canvas)
+   collapses them to zero width. See obsidian/meta/decisions-log.md ADR-0019. */
+/* The consent banner is server-rendered (it paints with the page). Hidden before
+   paint for a visitor who already chose (`consent-flag.ts`) and on the robot
+   form, which has no visitor to ask (D-016). */
+html[data-consent] [data-cookie-banner],
+html:has(meta[name="x-robot-view"]) [data-cookie-banner] {
+  display: none;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  min-height: 100lvh;
+}
+
+/* No scrollbar. The page is one continuous shot eight screens tall and the bar
+   is a ruler laid down its right edge — it reads the height of the *document*,
+   which here is only a device for driving the scene, and says nothing a visitor
+   wants to know.
+
+   Both spellings: `scrollbar-width` is the standard one (Firefox, and Chromium
+   since 121) and the pseudo-element is what older WebKit answers to. The page
+   still scrolls by every means it did — wheel, trackpad, keys, touch — and the
+   only thing lost is the drag handle. */
+html {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+@layer base {
+  /* Adaptive scaling grid — scales the root font-size with the viewport so a
+     rem-based layout stays proportional. Each breakpoint divides FONT_BASE
+     (16px) by the design base width its range was laid out at:
+       font-size: 16 * 100 / baseWidth  (vw)
+     Above 1920px the AdaptiveGrid component takes over (scale-up).
+     Keep in sync with src/components/common/grid/grid.config.ts.
+
+     The two lower ranges carry a **floor and a ceiling**, which the plain
+     starter ladder does not. A range's bottom edge is always `16 ×
+     bottomWidth / baseWidth`, and unclamped that is what the tablet and phone
+     ranges were doing to this design: 10px root at 641px (the whole page at
+     62%, body copy at ten pixels) and 28px root at 640px (the phone layout at
+     1.8×, a nav pill wider than the window). The clamps hold each range inside
+     the size its layout was drawn for; below the floor the layout **reflows**
+     — see the `sm:`/`lg:` variants through `components/common/` — instead of
+     going on shrinking. See obsidian/frontend/design-system.md → "The ladder". */
+  html {
+    font-size: 16px;
+  }
+
+  @media (max-width: 1920px) {
+    html {
+      font-size: 0.833333vw; /* 16 * 100 / 1920 */
+    }
+  }
+
+  @media (max-width: 1440px) {
+    html {
+      font-size: 1.111111vw; /* 16 * 100 / 1440 */
+    }
+  }
+
+  /* Tablet. Stops at 1023.98 rather than 1024 so it never overlaps Tailwind's
+     `lg:` (min-width: 64rem) — the width where the desktop layout takes over is
+     the width where its own base does. */
+  @media (max-width: 1023.98px) {
+    html {
+      font-size: max(1.5625vw, 12px); /* 16 * 100 / 1024, floored */
+    }
+  }
+
+  /* Phone, matching Tailwind's `sm:` boundary. Capped so a 640px-wide window
+     — a phone turned on its side — does not render a 360px design at 1.8×. */
+  @media (max-width: 639.98px) {
+    html {
+      font-size: min(4.444444vw, 18px); /* 16 * 100 / 360, capped */
+    }
+  }
+}
+
+@layer utilities {
+}
+
+@layer components {
+  /* Empty. The scene's vignette used to live here as a pseudo-element overlay;
+     it is now part of the CRT pass that the scene ends on, which is one falloff
+     instead of two stacked and — unlike a gradient in a stylesheet — something
+     the tuning panel can move. See obsidian/frontend/scene-3d.md. */
+}
