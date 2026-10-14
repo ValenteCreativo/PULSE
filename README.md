@@ -61,7 +61,7 @@ sequenceDiagram
     W->>M: purchase(productId, topicId, purchaseId)
     M-->>W: IntelligencePurchased receipt
     M-->>E: Event available for indexing
-    Note over E: Handler implemented; hosted indexing currently blocked
+    Note over E: Hosted indexing is pending
 ```
 
 ## System architecture
