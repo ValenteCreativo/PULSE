@@ -206,6 +206,8 @@ For the interactive testnet UX, the landing also exposes:
 
 Only a user-controlled browser wallet can send the prepared testnet transaction. No public API endpoint signs, broadcasts, spends funds, or invokes paid inference.
 
+After the verifier confirms a real `IntelligencePurchased` event, the purchase demo renders a receipt with the product, price, chain, topic ID, purchase ID, transaction link, and a link to the deterministic Human Pulse fixture report. The report remains public in this hackathon prototype: payment proves settlement and event delivery, not exclusive access to live intelligence.
+
 ## Quickstart
 
 ### Prerequisites
